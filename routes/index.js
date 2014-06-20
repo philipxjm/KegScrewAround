@@ -8,7 +8,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/u', function(req, res) {
-	mongoose.UserModel('philip').find(function (err, users) {
+	mongoose.Users('philip').find(function (err, users) {
 		res.send(users);
 	});
 });
