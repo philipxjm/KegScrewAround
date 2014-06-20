@@ -13,6 +13,19 @@ var mongoose = require('./mongoose');
 
 var app = express();
 
+var philip = new mongoose.UserModel({
+        cid: 123,
+        username: "Philip",
+        displayName: "philipxjm",
+        location: "NYC",
+        imageURL: "blah"
+});
+
+philip.save(function (err) {
+  if (err)
+    console.log('nope');
+  console.log('meow');
+});
 
 Keen.client.addEvents({
     //add event here

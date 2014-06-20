@@ -45,7 +45,7 @@ var UserSchema = new mongoose.Schema({
 var UserModel = mongoose.model('UserModel', UserSchema);
 
 module.exports = {
-	'SessionModel' : SessionModel,
-	'UserModel' : UserModel,
+    'SessionModel' : SessionModel,
+    'UserModel' : UserModel,
 	'mongoose' : mongoose
 }
