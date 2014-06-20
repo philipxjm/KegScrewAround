@@ -9,7 +9,7 @@ var Keen = require('./keen');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
-var mongoose = require('./routes/mongoose');
+var mongoose = require('./mongoose');
 
 var app = express();
 
