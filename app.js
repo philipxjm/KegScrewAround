@@ -13,13 +13,16 @@ var mongoose = require('./mongoose');
 
 var app = express();
 
-var philip = new mongoose.UserModel({
-        cid: 123,
-        username: "Philip",
-        displayName: "philipxjm",
+var philip = new mongoose.Users({
+
+        cid: 124,
+        username: "Luke",
+        displayName: "lukeskywalker",
         location: "NYC",
         imageURL: "blah"
 });
+
+console.log(philip.username);
 
 philip.save(function (err) {
   if (err)

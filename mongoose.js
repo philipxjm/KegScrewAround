@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var uristring =
 	process.env.MONGOLAB_URI ||
 	process.env.MONGOHQ_URL ||
-	'mongodb://localhost/HelloMongoose';
+	'mongodb://philipxjm:Iamgood2@ds043348.mongolab.com:43348/heroku_app26584479';
 
 var theport = process.env.PORT || 5000;
 
@@ -31,21 +31,18 @@ var SessionSchema = new mongoose.Schema({
 });
 
 var SessionModel = mongoose.model('SessionModel', SessionSchema);
-
 var UserSchema = new mongoose.Schema({
-	user: {
         cid: Number,
         username: String,
         displayName: String,
         location: String,
         imageURL: String
-    }
 });
 
-var UserModel = mongoose.model('UserModel', UserSchema);
+var Users = mongoose.model('Users', UserSchema);
 
 module.exports = {
     'SessionModel' : SessionModel,
-    'UserModel' : UserModel,
+    'Users' : Users,
 	'mongoose' : mongoose
 }
