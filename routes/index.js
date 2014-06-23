@@ -50,8 +50,22 @@ router.post('/newJSON', function(req, res){
 	var user;
 	console.log("POST: ");
 	res.send(req.body);
+
+	pours = new mongoose.Pours({
+		pour : req.body.pour,
+		cid : req.body.cid
+	});
+
+	pours.save(function (err) {
+    	if (!err) {
+    		return console.log("pours document created");
+   		} else {
+    		return console.log(err);
+    	}
+  	});
+
 	user = new mongoose.Users({
-  		cid: req.body.user.cid,
+  		cid: req.body.cid,
     	username: req.body.user.username,
     	displayName: req.body.user.displayName,
     	location: req.body.user.location,
@@ -60,7 +74,7 @@ router.post('/newJSON', function(req, res){
 
   	user.save(function (err) {
     	if (!err) {
-    		return console.log("Mongolab document created");
+    		return console.log("user document created");
    		} else {
     		return console.log(err);
     	}
@@ -68,8 +82,7 @@ router.post('/newJSON', function(req, res){
 
   	console.log(req.body.pour);
   	Keen.client.addEvents({
-   		"session": [
-   		req.body]
+   		"session": [req.body]
 	}, function(err, res) {
     	if (err) {
     	    console.log(err);

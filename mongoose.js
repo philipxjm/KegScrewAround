@@ -15,7 +15,7 @@ mongoose.connect(uristring, function (err, res) {
   	}
 });
 
-var SessionSchema = new mongoose.Schema({
+var PourSchema = new mongoose.Schema({
 	pour: [{
         id: Number,
         //container: String,
@@ -30,7 +30,7 @@ var SessionSchema = new mongoose.Schema({
     //sessionID : Number
 });
 
-var SessionModel = mongoose.model('SessionModel', SessionSchema);
+var Pours = mongoose.model('Pours', PourSchema);
 var UserSchema = new mongoose.Schema({
         cid: Number,
         username: String,
@@ -42,7 +42,7 @@ var UserSchema = new mongoose.Schema({
 var Users = mongoose.model('Users', UserSchema);
 
 module.exports = {
-    'SessionModel' : SessionModel,
+    'Pours' : Pours,
     'Users' : Users,
 	'mongoose' : mongoose
 }
