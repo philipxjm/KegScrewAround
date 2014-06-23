@@ -48,7 +48,9 @@ router.param('imageURL', function(req,res, next, imageURL){
 
 router.post('/newJSON', function(req, res){
 	var user;
-	console.log("POST: ");
+
+  res.send("Post has been hit");
+	res.send("POST: ");
 	res.send(req.body);
 
 	pours = new mongoose.Pours({
@@ -58,8 +60,10 @@ router.post('/newJSON', function(req, res){
 
 	pours.save(function (err) {
     	if (!err) {
+        res.send("pours document created");
     		return console.log("pours document created");
    		} else {
+        res.send(err);
     		return console.log(err);
     	}
   	});
@@ -74,8 +78,10 @@ router.post('/newJSON', function(req, res){
 
   	user.save(function (err) {
     	if (!err) {
+        res.send("user document created");
     		return console.log("user document created");
    		} else {
+        res.send(err);
     		return console.log(err);
     	}
   	});
@@ -85,8 +91,10 @@ router.post('/newJSON', function(req, res){
    		"session": [req.body]
 	}, function(err, res) {
     	if (err) {
+          res.send(err);
     	    console.log(err);
    		} else {
+          res.send("Keen event creation done");
    	    	console.log("Keen event creation done");
    		}
 	});
