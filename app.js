@@ -13,32 +13,10 @@ var mongoose = require('./mongoose');
 
 var app = express();
 
-var philip = new mongoose.Users({
 
-        cid: 124,
-        username: "Luke",
-        displayName: "lukeskywalker",
-        location: "NYC",
-        imageURL: "blah"
-});
 
-console.log(philip.username);
 
-philip.save(function (err) {
-  if (err)
-    console.log('nope');
-  console.log('meow');
-});
 
-Keen.client.addEvents({
-    //add event here
-}, function(err, res) {
-    if (err) {
-        console.log("Oh no, an error!");
-    } else {
-        console.log("Hooray, it worked!");
-    }
-});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
