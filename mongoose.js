@@ -18,16 +18,16 @@ mongoose.connect(uristring, function (err, res) {
 var SessionSchema = new mongoose.Schema({
 	pour: [{
         id: Number,
-        container: String,
-        currentTime: Number,
-        startTime: Number,
-        endTime: Number,
-        fluidOunces: Number,
-        temperature: Number,
-        humidity: Number
+        //container: String,
+        //currentTime: Number,
+        //startTime: Number,
+        //endTime: Number,
+        //fluidOunces: Number,
+        //temperature: Number,
+        //humidity: Number
     }],
     cid : Number,
-    sessionID : Number
+    //sessionID : Number
 });
 
 var SessionModel = mongoose.model('SessionModel', SessionSchema);
