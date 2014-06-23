@@ -88,13 +88,12 @@ router.post('/newJSON', function(req, res){
 
   	console.log(req.body.pour);
   	Keen.client.addEvents({
-   		"session": [req.body]
-	}, function(err, res) {
+   		    "session": [req.body]
+	    }, function(err, res) {
     	if (err) {
           res.send(err);
     	    console.log(err);
    		} else {
-          res.send("Keen event creation done");
    	    	console.log("Keen event creation done");
    		}
 	});
