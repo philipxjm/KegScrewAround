@@ -21,37 +21,13 @@ router.get('/u', function(req, res) {
 	});
 });
 
-router.param('cid', function(req,res, next, cid){
-	req.cid = cid;
-	next();
-});
 
-router.param('username', function(req,res, next, username){
-	req.username = username;
-	next();
-});
-
-router.param('displayName', function(req,res, next, displayName){
-	req.displayName = displayName;
-	next();
-});
-
-router.param('location', function(req,res, next, location){
-	req.location = location;
-	next();
-});
-
-router.param('imageURL', function(req,res, next, imageURL){
-	req.imageURL = imageURL;
-	next();
-});
 
 router.post('/newJSON', function(req, res){
-	var user;
+	var user, pours;
 
   res.send("Post has been hit");
-	res.send("POST: ");
-	res.send(req.body);
+	console.log(req.body);
 
 	pours = new mongoose.Pours({
 		pour : req.body.pour,
@@ -97,6 +73,31 @@ router.post('/newJSON', function(req, res){
    	    	console.log("Keen event creation done");
    		}
 	});
+});
+
+router.param('cid', function(req,res, next, cid){
+  req.cid = cid;
+  next();
+});
+
+router.param('username', function(req,res, next, username){
+  req.username = username;
+  next();
+});
+
+router.param('displayName', function(req,res, next, displayName){
+  req.displayName = displayName;
+  next();
+});
+
+router.param('location', function(req,res, next, location){
+  req.location = location;
+  next();
+});
+
+router.param('imageURL', function(req,res, next, imageURL){
+  req.imageURL = imageURL;
+  next();
 });
 
 router.post('/new/:cid/:username/:displayName/:location/:imageURL', function (req, res){
