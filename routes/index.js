@@ -47,39 +47,34 @@ router.param('imageURL', function(req,res, next, imageURL){
 });
 
 router.post('/newJSON', function(req, res){
-	console.log("hi");
 	var user;
 	console.log("POST: ");
 	res.send(req.body);
 	user = new mongoose.Users({
-  		cid: req.body.cid,
-    	username: req.body.username,
-    	displayName: req.body.displayName,
-    	location: req.body.location,
-    	imageURL: req.body.imageURL
+  		cid: req.body.user.cid,
+    	username: req.body.user.username,
+    	displayName: req.body.user.displayName,
+    	location: req.body.user.location,
+    	imageURL: req.body.user.imageURL
   	});
 
   	user.save(function (err) {
     	if (!err) {
-    		return console.log("created");
+    		return console.log("Mongolab document created");
    		} else {
     		return console.log(err);
     	}
   	});
 
+  	console.log(req.body.pour);
   	Keen.client.addEvents({
-   		"session": [{
-  		cid: req.body.cid,
-    	username: req.body.username,
-    	displayName: req.body.displayName,
-    	location: req.body.location,
-    	imageURL: req.body.imageURL
-  	}]
+   		"session": [
+   		req.body]
 	}, function(err, res) {
     	if (err) {
     	    console.log(err);
    		} else {
-   	    	console.log("Hooray, it worked!");
+   	    	console.log("Keen event creation done");
    		}
 	});
 });
@@ -90,11 +85,11 @@ router.post('/new/:cid/:username/:displayName/:location/:imageURL', function (re
   console.log("POST: ");
   console.log(req.body);
   user = new mongoose.Users({
-  	cid: req.cid,
-    username: req.username,
-    displayName: req.displayName,
-    location: req.location,
-    imageURL: req.imageURL
+  	cid: req.user.cid,
+    username: req.user.username,
+    displayName: req.user.displayName,
+    location: req.user.location,
+    imageURL: req.user.imageURL
   });
   user.save(function (err) {
     if (!err) {
@@ -106,11 +101,11 @@ router.post('/new/:cid/:username/:displayName/:location/:imageURL', function (re
 
   Keen.client.addEvents({
     "Users": [
-	    {cid: req.cid,
-	    	username: req.username,
-	    	displayName: req.displayName,
-	    	location: req.location,
-	    	imageURL: req.imageURL}
+	    {cid: req.user.cid,
+	    	username: req.user.username,
+	    	displayName: req.user.displayName,
+	    	location: req.user.location,
+	    	imageURL: req.user.imageURL}
 	]}, function(err, res) {
     if (err) {
         console.log("Oh no, an error!");
