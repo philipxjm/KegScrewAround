@@ -142,8 +142,7 @@ router.post('/newJSON', function(req, res) {
             });
             res.end();
           } catch (err) {
-            console.log(err.message);
-            error = err.message;
+            console.log(err);
           }
         }
       }
@@ -151,33 +150,37 @@ router.post('/newJSON', function(req, res) {
       console.log("error at query cid" + err)
     };
   });
+  
 
-  pours = new mongoose.Pours({
-    pour: req.body.pour,
-    cid: req.body.cid
-  });
-  pours.save(function(err) {
-    if (!err) {
-      return console.log("pours document created");
-    } else {
-      console.log("error at Pours creation")
-      return console.log(err);
-    }
-  });
-
-  Keen.client.addEvents({
-      "Sessions": [req.body]
-    },
-    function(err, result) {
-      if (err) {
-        console.log("error at Keen event creation")
-        console.log(err);
+  if(req.body.hasOwnProperty('cid') &&
+     req.body.hasOwnProperty('user') &&
+     req.body.hasOwnProperty('pour')){
+    pours = new mongoose.Pours({
+      pour: req.body.pour,
+      cid: req.body.cid
+    });
+    pours.save(function(err) {
+      if (!err) {
+        return console.log("pours document created");
       } else {
-        console.log("Keen event created");
+        console.log("error at Pours creation")
+        return console.log(err);
       }
-    }
-  );
+    });
 
+    Keen.client.addEvents({
+        "Sessions": [req.body]
+      },
+      function(err, result) {
+        if (err) {
+          console.log("error at Keen event creation")
+          console.log(err);
+        } else {
+          console.log("Keen event created");
+        }
+      }
+    );
+  }
 });
 
 module.exports = router;
