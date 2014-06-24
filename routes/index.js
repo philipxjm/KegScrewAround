@@ -31,14 +31,14 @@ router.get('/p', function(req, res) {
 
 router.post('/newJSON', function(req, res){
 	var user, pours;
-
+  console.log("Got response: " + res.statusCode);
   res.send("Post has been hit");
-	console.log(req.body);
+	console.log('request =' + JSON.stringify(req.body));
 
 	pours = new mongoose.Pours({
 		pour : req.body.pour,
 		cid : req.body.cid
-	});
+	  });
 
 	pours.save(function (err) {
     	if (!err) {
