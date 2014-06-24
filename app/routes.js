@@ -3,9 +3,10 @@ var router = express.Router();
 var mongoose = require('./mongoose');
 var Keen = require('./keen');
 var bodyParser = require('body-parser');
+var error;
 
 /* GET home page. */
-router.use(bodyParser(), function(){
+router.use(bodyParser(), function() {
   console.log("hi");
 });
 
@@ -14,21 +15,23 @@ router.get('/', function(req, res) {
 });
 
 router.get('/u', function(req, res) {
-	mongoose.Users.find(function (err, users) {
+  mongoose.Users.find(function(err, users) {
     console.log("Getting all Users");
-		res.send(users);
-	});
+    res.send(users);
+  });
 });
 
 router.get('/p', function(req, res) {
-  mongoose.Pours.find(function (err, pours) {
+  mongoose.Pours.find(function(err, pours) {
     console.log("Getting all Pours");
     res.send(pours);
   });
 });
 
-router.param('cid', function(req, res, next, cid){
-  mongoose.Users.find({"cid" : cid}).exec(function(err, result) {
+router.param('cid', function(req, res, next, cid) {
+  mongoose.Users.find({
+    "cid": cid
+  }).exec(function(err, result) {
     if (!err) {
       console.log("got cid query result for user: " + cid);
       req.user = result;
@@ -37,7 +40,9 @@ router.param('cid', function(req, res, next, cid){
     };
     //next();
   });
-  mongoose.Pours.find({"cid" : cid}).exec(function(err, result) {
+  mongoose.Pours.find({
+    "cid": cid
+  }).exec(function(err, result) {
     if (!err) {
       console.log("got cid query result for pour: " + cid);
       req.pour = result;
@@ -48,8 +53,10 @@ router.param('cid', function(req, res, next, cid){
   });
 });
 
-router.param('username', function(req, res, next, username){
-  mongoose.Users.find({"username" : username}).exec(function(err, result) {
+router.param('username', function(req, res, next, username) {
+  mongoose.Users.find({
+    "username": username
+  }).exec(function(err, result) {
     if (!err) {
       console.log("got username query result: " + username);
       req.user = result;
@@ -60,29 +67,31 @@ router.param('username', function(req, res, next, username){
   });
 });
 
-router.param('id', function(req, res, next, id){
+router.param('id', function(req, res, next, id) {
   req.id = id;
   next();
 });
 
-router.get('/u/cid/:cid',function(req,res){
+router.get('/u/cid/:cid', function(req, res) {
   res.send(req.user);
 });
 
-router.get('/u/username/:username',function(req,res){
+router.get('/u/username/:username', function(req, res) {
   res.send(req.user);
 });
 
-router.get('/p/cid/:cid',function(req,res){
-  res.send(req.pour);
+router.get('/p/cid/:cid', function(req, res) {
+
 });
 
-router.get('/p/cid/:cid/id/:id',function(req,res){
+router.get('/p/cid/:cid/id/:id', function(req, res) {
   var gotPours = req.pour[0];
   console.log(gotPours);
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  for (var i=0; i<gotPours.pour.length; i++){
-    if(gotPours.pour[i].id == req.id){
+  res.writeHead(200, {
+    'Content-Type': 'text/plain'
+  });
+  for (var i = 0; i < gotPours.pour.length; i++) {
+    if (gotPours.pour[i].id == req.id) {
       res.write(JSON.stringify(gotPours.pour[i]));
     }
   }
@@ -92,60 +101,83 @@ router.get('/p/cid/:cid/id/:id',function(req,res){
 });
 
 //passing JSON post
-router.post('/newJSON', function(req, res){
-  res.write("Post has been hit " + JSON.stringify(req.body));
-	var user, pours;
+router.post('/newJSON', function(req, res) {
+  var user, pours;
   console.log("Got response: " + res.statusCode);
-	console.log('request =' + JSON.stringify(req.body));
+  console.log('request =' + JSON.stringify(req.body));
 
-	pours = new mongoose.Pours({
-		pour : req.body.pour,
-		cid : req.body.cid
-	});
-
-	pours.save(function (err) {
+  //TEST IF USER IS REDUNDANT
+  mongoose.Users.find({
+    "cid": req.body.cid
+  }).exec(function(err, result) {
     if (!err) {
-      res.write("pours document created");
-    	return console.log("pours document created");
-   	} else {
+      try {
+        var inUser = result;
+        if (inUser[0].cid == req.body.cid) {
+          console.log("redundant found");
+          console.log("aborting user post request, still posting pour");
+          return res.send("user cid is redundant, aborting user post");
+        }
+      } catch (err) {
+        console.log(err);
+        if (err.message == "Cannot read property 'cid' of undefined") {
+          res.send("No user cid redundancy found, continueing with post request")
+          console.log("no redundancy found");
+          try {
+            user = new mongoose.Users({
+              cid: req.body.cid,
+              username: req.body.user.username,
+              displayName: req.body.user.displayName,
+              location: req.body.user.location,
+              imageURL: req.body.user.imageURL
+            });
+
+            user.save(function(err) {
+              if (!err) {
+                return console.log("user document created");
+              } else {
+                console.log("error at Users creation")
+                return console.log(err);
+              }
+            });
+            res.end();
+          } catch (err) {
+            console.log(err.message);
+            error = err.message;
+          }
+        }
+      }
+    } else {
+      console.log("error at query cid" + err)
+    };
+  });
+
+  pours = new mongoose.Pours({
+    pour: req.body.pour,
+    cid: req.body.cid
+  });
+  pours.save(function(err) {
+    if (!err) {
+      return console.log("pours document created");
+    } else {
       console.log("error at Pours creation")
-      res.write("error at Pours creation " + err);
-  		return console.log(err);
-  	}
-  });
-
-	user = new mongoose.Users({
-  		cid: req.body.cid,
-    	username: req.body.user.username,
-    	displayName: req.body.user.displayName,
-    	location: req.body.user.location,
-    	imageURL: req.body.user.imageURL
-  });
-
-  user.save(function (err) {
-    	if (!err) {
-        res.write("User document created");
-        return console.log("user document created");
-   		} else {
-        res.write("error at Users creation " + err);
-        console.log("error at Users creation")
-        return console.log(err);
-    	}
-  });
-  Keen.client.addEvents({
-   	  "Sessions": [req.body]
-	  }, function(err, result) {
-      if (err) {          
-          res.write("error at Keen creation " + err);
-          console.log("error at Keen event creation")
-    	    console.log(err);
-   		} else {
-          res.write("Keen event created ");
-   	    	console.log("Keen event created");
-   		}
+      return console.log(err);
     }
-	);
-  res.end();
+  });
+
+  Keen.client.addEvents({
+      "Sessions": [req.body]
+    },
+    function(err, result) {
+      if (err) {
+        console.log("error at Keen event creation")
+        console.log(err);
+      } else {
+        console.log("Keen event created");
+      }
+    }
+  );
+
 });
 
 module.exports = router;
