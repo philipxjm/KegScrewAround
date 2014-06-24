@@ -6,12 +6,12 @@ var bodyParser = require('body-parser');
 
 /* GET home page. */
 router.use(bodyParser(), function(){
-	console.log("hi");
+  console.log("hi");
 });
 
 router.get('/', function(req, res) {
   res.render('index', {
-    title: 'Home'
+    title: 'KegScrewAround'
   });
 });
 
@@ -30,25 +30,24 @@ router.get('/p', function(req, res) {
 
 
 router.post('/newJSON', function(req, res){
+  res.send("Post has been hit " + req.body);
 	var user, pours;
   console.log("Got response: " + res.statusCode);
-  res.send("Post has been hit");
 	console.log('request =' + JSON.stringify(req.body));
 
 	pours = new mongoose.Pours({
 		pour : req.body.pour,
 		cid : req.body.cid
-	  });
+	});
 
 	pours.save(function (err) {
-    	if (!err) {
-        res.send("pours document created");
-    		return console.log("pours document created");
-   		} else {
-        res.send(err);
-    		return console.log(err);
-    	}
-  	});
+    if (!err) {
+    	return console.log("pours document created");
+   	} else {
+      console.log("error at Pours creation")
+  		return console.log(err);
+  	}
+  });
 
 	user = new mongoose.Users({
   		cid: req.body.cid,
@@ -56,28 +55,27 @@ router.post('/newJSON', function(req, res){
     	displayName: req.body.user.displayName,
     	location: req.body.user.location,
     	imageURL: req.body.user.imageURL
-  	});
+  });
 
-  	user.save(function (err) {
+  user.save(function (err) {
     	if (!err) {
-        res.send("user document created");
-    		return console.log("user document created");
+        return console.log("user document created");
    		} else {
-        res.send(err);
-    		return console.log(err);
+        console.log("error at Users creation")
+        return console.log(err);
     	}
-  	});
-
-  	console.log(req.body.pour);
-  	Keen.client.addEvents({
-   		    "session": [req.body]
-	    }, function(err, res) {
-    	if (err) {
-          res.send(err);
+  });
+  Keen.client.addEvents({
+   	  "session": [req.body]
+	  }, function(err, res) {
+      if (err) {          
+          console.log("error at Keen event creation")
     	    console.log(err);
    		} else {
-   	    	console.log("Keen event creation done");
+   	    	console.log("Keen event created");
    		}
-	});
+    }
+	);
 });
+
 module.exports = router;
