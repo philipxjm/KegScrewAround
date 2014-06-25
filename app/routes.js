@@ -155,31 +155,89 @@ router.post('/newJSON', function(req, res) {
   if (req.body.hasOwnProperty('cid') &&
     req.body.hasOwnProperty('user') &&
     req.body.hasOwnProperty('pour')) {
-    pours = new mongoose.Pours({
-      pour: req.body.pour,
-      cid: req.body.cid
-    });
-    pours.save(function(err) {
-      if (!err) {
-        Keen.client.addEvents({
-            "Sessions": [req.body]
-          },
-          function(err, result) {
-            if (err) {
-              console.log("error at Keen event creation")
-              console.log(err);
-            } else {
-              console.log("Keen event created");
+    if(req.body.pour[0].hasOwnProperty('id') &&
+      req.body.pour[0].hasOwnProperty('container') &&
+      req.body.pour[0].hasOwnProperty('currentTime') &&
+      req.body.pour[0].hasOwnProperty('startTime') &&
+      req.body.pour[0].hasOwnProperty('endTime') &&
+      req.body.pour[0].hasOwnProperty('fluidOunces') && 
+      req.body.pour[0].hasOwnProperty('temperature') &&
+      req.body.pour[0].hasOwnProperty('humidity')){
+
+      pours = new mongoose.Pours({
+        pour: req.body.pour,
+        cid: req.body.cid
+      });
+      pours.save(function(err) {
+        if (!err) {
+          Keen.client.addEvents({
+              "Sessions": [req.body]
+            },
+            function(err, result) {
+              if (err) {
+                console.log("error at Keen event creation")
+                console.log(err);
+              } else {
+                console.log("Keen event created");
+              }
             }
-          }
-        );
-        return console.log("pours document created");
-      } else {
-        console.log("error at Pours creation, keen aborted")
-        return console.log(err);
-      }
-    });
+          );
+          return console.log("pours document created");
+        } else {
+          console.log("error at Pours creation, keen aborted")
+          return console.log(err);
+        }
+      });
+    } else {
+      console.log("pour input is not in the right format");
+    }
+  } else {
+    console.log("JSON input is not in the right format");
   }
+});
+
+router.post('/newUser', function(req, res) {
+  mongoose.Users.find({
+    "cid": req.body.cid
+  }).exec(function(err, result) {
+    if (!err) {
+      try {
+        var inUser = result;
+        if (inUser[0].cid == req.body.cid) {
+          console.log("redundancy found --> aborting user post request");
+          return res.send("user cid is redundant");
+        }
+      } catch (err) {
+        if (err.message == "Cannot read property 'cid' of undefined") {
+          res.send("No user cid redundancy found, continueing with post request")
+          console.log("no redundancy found");
+          try {
+            user = new mongoose.Users({
+              cid: req.body.cid,
+              username: req.body.user.username,
+              displayName: req.body.user.displayName,
+              location: req.body.user.location,
+              imageURL: req.body.user.imageURL
+            });
+
+            user.save(function(err) {
+              if (!err) {
+                return console.log("user document created");
+              } else {
+                console.log("error at Users creation")
+                return console.log(err);
+              }
+            });
+            res.end();
+          } catch (err) {
+            console.log(err);
+          }
+        }
+      }
+    } else {
+      console.log("error at query cid" + err)
+    };
+  });
 });
 
 module.exports = router;
