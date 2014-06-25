@@ -5,8 +5,6 @@ var uristring =
 	process.env.MONGOHQ_URL ||
 	'mongodb://philipxjm:Iamgood2@ds043348.mongolab.com:43348/heroku_app26584479';
 
-var theport = process.env.PORT || 5000;
-
 mongoose.connect(uristring, function (err, res) {
   	if (err) {
  		console.log ('ERROR connecting to: ' + uristring + '. ' + err);

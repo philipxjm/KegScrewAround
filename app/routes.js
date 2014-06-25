@@ -6,9 +6,7 @@ var bodyParser = require('body-parser');
 var error;
 
 /* GET home page. */
-router.use(bodyParser(), function() {
-  console.log("hi");
-});
+router.use(bodyParser());
 
 router.get('/', function(req, res) {
   res.send("Keg Screw Around");
@@ -81,7 +79,7 @@ router.get('/u/username/:username', function(req, res) {
 });
 
 router.get('/p/cid/:cid', function(req, res) {
-
+  res.send(req.pour);
 });
 
 router.get('/p/cid/:cid/id/:id', function(req, res) {
