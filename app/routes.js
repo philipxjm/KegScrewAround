@@ -114,7 +114,7 @@ router.post('/newJSON', function(req, res) {
       try {
         var inUser = result;
         if (inUser[0].cid == req.body.cid) {
-          console.log("redundant found");
+          console.log("redundancy found");
           console.log("aborting user post request, still posting pour");
           return res.send("user cid is redundant, aborting user post");
         }
@@ -150,36 +150,35 @@ router.post('/newJSON', function(req, res) {
       console.log("error at query cid" + err)
     };
   });
-  
 
-  if(req.body.hasOwnProperty('cid') &&
-     req.body.hasOwnProperty('user') &&
-     req.body.hasOwnProperty('pour')){
+
+  if (req.body.hasOwnProperty('cid') &&
+    req.body.hasOwnProperty('user') &&
+    req.body.hasOwnProperty('pour')) {
     pours = new mongoose.Pours({
       pour: req.body.pour,
       cid: req.body.cid
     });
     pours.save(function(err) {
       if (!err) {
+        Keen.client.addEvents({
+            "Sessions": [req.body]
+          },
+          function(err, result) {
+            if (err) {
+              console.log("error at Keen event creation")
+              console.log(err);
+            } else {
+              console.log("Keen event created");
+            }
+          }
+        );
         return console.log("pours document created");
       } else {
-        console.log("error at Pours creation")
+        console.log("error at Pours creation, keen aborted")
         return console.log(err);
       }
     });
-
-    Keen.client.addEvents({
-        "Sessions": [req.body]
-      },
-      function(err, result) {
-        if (err) {
-          console.log("error at Keen event creation")
-          console.log(err);
-        } else {
-          console.log("Keen event created");
-        }
-      }
-    );
   }
 });
 

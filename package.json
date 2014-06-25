@@ -10,7 +10,8 @@
     "express": "~4.2.0",
     "keen.io": "^0.1.2",
     "logfmt": "^1.1.2",
-    "mongoose": "^3.8.12"
+    "mongoose": "^3.8.12",
+    "newrelic": "^1.7.3"
   },
   "engines": {
     "node": "0.10.28"

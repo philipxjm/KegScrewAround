@@ -1,0 +1,6 @@
+{"name":"newrelic","hostname":"Fallen-One.local","pid":17180,"level":30,"msg":"Starting New Relic for Node.js connection process.","time":"2014-06-25T14:00:20.892Z","v":0}
+{"name":"newrelic","hostname":"Fallen-One.local","pid":17180,"component":"new_relic_response","level":30,"msg":"Reporting to: https://rpm.newrelic.com/accounts/707232/applications/3389591","time":"2014-06-25T14:00:22.486Z","v":0}
+{"name":"newrelic","hostname":"Fallen-One.local","pid":17180,"component":"collector_api","level":30,"msg":"Connected to collector-111.newrelic.com:443 with agent run ID 1298705455.","time":"2014-06-25T14:00:22.487Z","v":0}
+{"name":"newrelic","hostname":"Fallen-One.local","pid":17197,"level":30,"msg":"Starting New Relic for Node.js connection process.","time":"2014-06-25T14:00:28.154Z","v":0}
+{"name":"newrelic","hostname":"Fallen-One.local","pid":17197,"component":"new_relic_response","level":30,"msg":"Reporting to: https://rpm.newrelic.com/accounts/707232/applications/3389591","time":"2014-06-25T14:00:29.157Z","v":0}
+{"name":"newrelic","hostname":"Fallen-One.local","pid":17197,"component":"collector_api","level":30,"msg":"Connected to collector-111.newrelic.com:443 with agent run ID 1298705750.","time":"2014-06-25T14:00:29.158Z","v":0}

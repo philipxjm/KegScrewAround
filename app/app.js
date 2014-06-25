@@ -1,3 +1,5 @@
+require('newrelic');
+
 var express = require('express');
     routes = require('./routes');
     app = express();
