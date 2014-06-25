@@ -9,7 +9,7 @@ var error;
 router.use(bodyParser());
 
 router.get('/', function(req, res) {
-  res.send("Keg Screw Around");
+  res.sendfile("./rickroll.jpg");
 });
 
 router.get('/u', function(req, res) {
