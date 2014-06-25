@@ -18,16 +18,15 @@ mongoose.connect(uristring, function (err, res) {
 var PourSchema = new mongoose.Schema({
 	pour: [{
         id: Number,
-        //container: String,
-        //currentTime: Number,
-        //startTime: Number,
-        //endTime: Number,
-        //fluidOunces: Number,
-        //temperature: Number,
-        //humidity: Number
+        container: String,
+        currentTime: Number,
+        startTime: Number,
+        endTime: Number,
+        fluidOunces: Number,
+        temperature: Number,
+        humidity: Number
     }],
-    cid : Number,
-    //sessionID : Number
+    cid : Number
 });
 
 var Pours = mongoose.model('Pours', PourSchema);
