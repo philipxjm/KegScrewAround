@@ -33,7 +33,8 @@ var UserSchema = new mongoose.Schema({
         username: String,
         displayName: String,
         location: String,
-        imageURL: String
+        imageURL: String,
+        totalOunces: Number
 });
 
 var Users = mongoose.model('Users', UserSchema);

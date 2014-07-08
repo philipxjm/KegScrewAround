@@ -3,6 +3,7 @@ var router = express.Router();
 var mongoose = require('./mongoose');
 var Keen = require('./keen');
 var bodyParser = require('body-parser');
+var async = require('async');
 var error;
 
 /* GET home page. */
@@ -95,8 +96,103 @@ router.get('/p/cid/:cid/id/:id', function(req, res) {
   }
   res.end();
   console.log(req.id);
-
 });
+
+router.get('/u/leaderboard', function(req, res) {
+
+  express.leaderboard =[];
+
+  mongoose.Users.find(function(err, users) {
+    async.each(users, function(user, callback) {
+      express.leaderboard[express.leaderboard.length] = user;
+      getOunces((express.leaderboard.length - 1), function(){
+        callback();
+      });
+    }, function(err) {
+      express.leaderboard.sort(compareUsers);
+      console.log(express.leaderboard);
+      var leaderboardJSON = [];
+      for(var i = 0; i < express.leaderboard.length; i++){
+        leaderboardJSON.push({rank : i + 1, user : express.leaderboard[i]});
+      }
+      console.log(JSON.stringify(leaderboardJSON));
+      res.send(JSON.stringify(leaderboardJSON));
+    });
+    //express.leaderboard.sort(compareUsers);
+
+  });
+});
+
+function getOunces(a, callback) {
+  mongoose.Pours.find({
+              "cid": express.leaderboard[a].cid
+            }).exec(function(err, result) {
+              
+                var userOunces = 0.0;
+                if (!err) {
+                  for (i = 0; i < result.length; i += 1) {
+                      for(j = 0; j < result[i].pour.length; j += 1){
+                          userOunces += result[i].pour[j].fluidOunces;
+                      }
+                  }
+                  express.leaderboard[a].set ('totalOunces' , userOunces);
+                  // console.log(express.leaderboard[a])
+                  console.log("---------------------------------------")
+                  callback();
+                } else {
+                  console.log("shit" + err)
+                };
+        });
+}
+
+function selectionSort(items){
+
+    var len = items.length,
+        min;
+
+    for (i=0; i < len; i++){
+
+        // set minimum to this position
+        min = i;
+
+        //check the rest of the array to see if anything is smaller
+        for (j=i+1; j < len; j++){
+            compareLeaders(items[j],items[min],function(){
+              if(express.leader == -1){
+                console.log("swap");
+                min = j;
+              }
+            });
+        }
+
+        //if the minimum isn't in the position, swap it
+        if (i != min){
+            swap(items, i, min);
+        }
+    }
+
+    return items;
+}
+
+function swap(items, firstIndex, secondIndex){
+    var temp = items[firstIndex];
+    items[firstIndex] = items[secondIndex];
+    items[secondIndex] = temp;
+}
+
+
+function compareUsers(user1, user2) {
+  if(user1.totalOunces > user2.totalOunces) {
+    return 1;
+  }
+  else if(user1.totalOunces < user2.totalOunces) {
+    return -1;
+  }
+  else {
+    return 0;
+  }
+}
+
 
 //passing JSON post
 router.post('/newJSON', function(req, res) {
@@ -127,7 +223,8 @@ router.post('/newJSON', function(req, res) {
               username: req.body.user.username,
               displayName: req.body.user.displayName,
               location: req.body.user.location,
-              imageURL: req.body.user.imageURL
+              imageURL: req.body.user.imageURL,
+              totalOunces: 0.0
             });
 
             user.save(function(err) {
