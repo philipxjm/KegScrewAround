@@ -168,7 +168,7 @@ function getOunces(a, callback) {
                   }
                   express.leaderboard[a].set ('totalOunces' , userOunces);
                   // console.log(express.leaderboard[a])
-                  console.log("---------------------------------------")
+                  //console.log("---------------------------------------")
                   callback();
                 } else {
                   console.log("shit" + err)
