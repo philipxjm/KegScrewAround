@@ -5,6 +5,7 @@ var Keen = require('./keen');
 var bodyParser = require('body-parser');
 var async = require('async');
 var CO2 = 100.0;
+var KegHealth = 100.0;
 
 var error;
 
@@ -46,6 +47,8 @@ router.post('/CO2/reset', function(req, res) {
   res.send("CO2 Level set back to 100%");
 });
 
+
+
 router.param('addCO2Value', function(req, res, next, addCO2Value) {
   CO2 += Number(addCO2Value);
   req.addCO2Value = addCO2Value;
@@ -57,6 +60,38 @@ router.param('delCO2Value', function(req, res, next, delCO2Value) {
   req.delCO2Value = delCO2Value;
   next();
 });
+
+//----------
+router.get('/keg', function(req, res) {
+  res.send({Keg : KegHealth});
+});
+
+router.post('/kegHealth/add/:addKegHealth', function(req, res) {
+  res.send("Added Value to KegHealth: " + Number(req.addKegHealth) + "%");
+});
+
+router.post('/kegHealth/del/:delKegHealth', function(req, res) {
+  res.send("Deleted Value from KegHealth: " + Number(req.delKegHealth) + "%");
+});
+
+router.post('/KegHealth/reset', function(req, res) {
+  KegHealth = 100.0;
+  res.send("KegHealth Level set back to 100%");
+});
+
+router.param('addKegHealthValue', function(req, res, next, addKegHealth) {
+  KegHealth += Number(addKegHealth);
+  req.addKegHealth = addKegHealth;
+  next();
+});
+
+router.param('delKegHealthValue', function(req, res, next, delKegHealth) {
+  KegHealth -= Number(delKegHealth);
+  req.delKegHealth = delKegHealth;
+  next();
+});
+
+
 
 router.param('cid', function(req, res, next, cid) {
   mongoose.Users.find({
@@ -136,7 +171,11 @@ router.get('/u/leaderboard', function(req, res) {
   mongoose.Users.find(function(err, users) {
     async.each(users, function(user, callback) {
       express.leaderboard[express.leaderboard.length] = user;
-      getOunces((express.leaderboard.length - 1), function(){
+      getOunces((express.leaderboard.length - 1), function(err){
+        if(err){
+          console.log(err);
+          res.send(err);
+        }
         callback();
       });
     }, function(err) {
@@ -155,7 +194,8 @@ router.get('/u/leaderboard', function(req, res) {
 });
 
 function getOunces(a, callback) {
-  mongoose.Pours.find({
+  try{
+    mongoose.Pours.find({
               "cid": express.leaderboard[a].cid
             }).exec(function(err, result) {
               
@@ -166,6 +206,7 @@ function getOunces(a, callback) {
                           userOunces += result[i].pour[j].fluidOunces;
                       }
                   }
+                  console.log(express.leaderboard[a]);
                   express.leaderboard[a].set ('totalOunces' , userOunces);
                   // console.log(express.leaderboard[a])
                   //console.log("---------------------------------------")
@@ -173,7 +214,10 @@ function getOunces(a, callback) {
                 } else {
                   console.log("shit" + err)
                 };
-        });
+    });
+  }catch(err) {
+    callback(err);
+  }
 }
 
 function selectionSort(items){
