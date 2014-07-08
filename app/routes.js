@@ -4,6 +4,8 @@ var mongoose = require('./mongoose');
 var Keen = require('./keen');
 var bodyParser = require('body-parser');
 var async = require('async');
+var CO2 = 100.0;
+
 var error;
 
 /* GET home page. */
@@ -25,6 +27,35 @@ router.get('/p', function(req, res) {
     console.log("Getting all Pours");
     res.send(pours);
   });
+});
+
+router.get('/CO2', function(req, res) {
+  res.send({CO2Level : CO2});
+});
+
+router.post('/CO2/add/:addCO2Value', function(req, res) {
+  res.send("Added Value to CO2: " + Number(req.addCO2Value) + "%");
+});
+
+router.post('/CO2/del/:delCO2Value', function(req, res) {
+  res.send("Deleted Value from CO2: " + Number(req.delCO2Value) + "%");
+});
+
+router.post('/CO2/reset', function(req, res) {
+  CO2 = 100.0;
+  res.send("CO2 Level set back to 100%");
+});
+
+router.param('addCO2Value', function(req, res, next, addCO2Value) {
+  CO2 += Number(addCO2Value);
+  req.addCO2Value = addCO2Value;
+  next();
+});
+
+router.param('delCO2Value', function(req, res, next, delCO2Value) {
+  CO2 -= Number(delCO2Value);
+  req.delCO2Value = delCO2Value;
+  next();
 });
 
 router.param('cid', function(req, res, next, cid) {
